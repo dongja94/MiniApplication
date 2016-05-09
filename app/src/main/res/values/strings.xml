@@ -15,4 +15,6 @@
     <string name="title_activity_facebook_photo_upload">FacebookPhotoUploadActivity</string>
     <string name="title_activity_youtube_player">YoutubePlayerActivity</string>
     <string name="title_activity_chatting">ChattingActivity</string>
+    <string name="tstore_tab_category_title">Category</string>
+    <string name="tstore_tab_search_title">Search</string>
 </resources>

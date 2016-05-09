@@ -12,4 +12,11 @@
     tools:context="com.begentgroup.miniapplication.tstore.TStoreDetailActivity"
     tools:showIn="@layout/activity_tstore_detail">
 
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/webView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
