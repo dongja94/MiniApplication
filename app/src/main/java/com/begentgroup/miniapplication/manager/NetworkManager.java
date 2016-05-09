@@ -126,6 +126,8 @@ public class NetworkManager {
                     TStoreCategoryResult data = gson.fromJson(response.body().charStream(), TStoreCategoryResult.class);
                     result.result = data.tstore.categories.categoryList;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                } else {
+                    throw new IOException(response.message());
                 }
             }
         });
@@ -164,6 +166,8 @@ public class NetworkManager {
                     TStoreCategoryProductResult data = gson.fromJson(response.body().charStream(), TStoreCategoryProductResult.class);
                     result.result = data.tstore;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                } else {
+                    throw new IOException(response.message());
                 }
             }
         });
@@ -201,6 +205,8 @@ public class NetworkManager {
                     TStoreCategoryProductResult data = gson.fromJson(response.body().charStream(), TStoreCategoryProductResult.class);
                     result.result = data.tstore;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                } else {
+                    throw new IOException(response.message());
                 }
             }
         });
