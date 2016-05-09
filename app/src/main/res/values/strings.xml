@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">MiniApplication</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_tstore_app_list">TStoreAppListActivity</string>
+    <string name="title_activity_tstore_detail">TStoreDetailActivity</string>
+    <string name="title_activity_facebook_detail">FacebookDetailActivity</string>
+    <string name="title_activity_facebook_write">FacebookWriteActivity</string>
+    <string name="title_activity_facebook_photo_upload">FacebookPhotoUploadActivity</string>
+    <string name="title_activity_youtube_player">YoutubePlayerActivity</string>
+    <string name="title_activity_chatting">ChattingActivity</string>
+</resources>

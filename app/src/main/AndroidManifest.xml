@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.begentgroup.miniapplication">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SplashActivity" />
+        <activity android:name=".login.LoginActivity" />
+        <activity
+            android:name=".tstore.TStoreAppListActivity"
+            android:label="@string/title_activity_tstore_app_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".tstore.TStoreDetailActivity"
+            android:label="@string/title_activity_tstore_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".facebook.FacebookDetailActivity"
+            android:label="@string/title_activity_facebook_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".facebook.FacebookWriteActivity"
+            android:label="@string/title_activity_facebook_write"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".facebook.FacebookPhotoUploadActivity"
+            android:label="@string/title_activity_facebook_photo_upload"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".youtube.YoutubePlayerActivity"
+            android:label="@string/title_activity_youtube_player"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".chatting.ChattingActivity"
+            android:label="@string/title_activity_chatting"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+    </application>
+
+</manifest>
