@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.begentgroup.miniapplication.R;
 import com.begentgroup.miniapplication.data.TStoreProduct;
+import com.bumptech.glide.Glide;
 
 /**
  * Created by dongja94 on 2016-05-09.
@@ -48,6 +49,8 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public void setProduct(TStoreProduct product) {
         this.product = product;
 
+
+        Glide.with(thumbView.getContext()).load(product.getThumbnailUrl()).into(thumbView);
 
         nameView.setText(product.getName());
         descriptionView.setText(product.getDescription());
