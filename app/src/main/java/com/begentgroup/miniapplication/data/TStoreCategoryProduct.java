@@ -8,5 +8,6 @@ import com.google.gson.annotations.SerializedName;
 public class TStoreCategoryProduct {
     @SerializedName("category")
     public TStoreCategoryInfo info;
+    public int totalCount;
     public TStoreProducts products;
 }

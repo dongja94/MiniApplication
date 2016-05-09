@@ -14,8 +14,10 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -140,6 +142,43 @@ public class NetworkManager {
     public Request getTStoreCategoryProductList(Object tag, String code, int page, int count, String order,
                                                 OnResultListener<TStoreCategoryProduct> listener) {
         String url = String.format(TSTORE_CATEGORY_PRODUCT_URL, code, page, count, order);
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Accept","application/json")
+                .header("appKey","458a10f5-c07e-34b5-b2bd-4a891e024c2a")
+                .build();
+
+        final NetworkResult<TStoreCategoryProduct> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    TStoreCategoryProductResult data = gson.fromJson(response.body().charStream(), TStoreCategoryProductResult.class);
+                    result.result = data.tstore;
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                }
+            }
+        });
+        return request;
+    }
+
+    private static final String TSTORE_SEARCH_PRODUCT_URL = TSTORE_SERVER + "/tstore/products?version=1&searchKeyword=%s&page=%s&count=%s&order=%s";
+
+    public static final String SEARCH_PRODUCT_ORDER_R = "R";
+    public static final String SEARCH_PRODUCT_ORDER_L = "L";
+    public static final String SEARCH_PRODUCT_ORDER_D = "D";
+
+    public Request getTStoreSearchProductList(Object tag, String keyword, int page, int count, String order,
+                                                OnResultListener<TStoreCategoryProduct> listener) throws UnsupportedEncodingException {
+        String url = String.format(TSTORE_SEARCH_PRODUCT_URL, URLEncoder.encode(keyword,"utf-8"), page, count, order);
         Request request = new Request.Builder()
                 .url(url)
                 .header("Accept","application/json")
