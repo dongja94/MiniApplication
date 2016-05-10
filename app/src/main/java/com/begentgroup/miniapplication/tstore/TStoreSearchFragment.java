@@ -2,7 +2,6 @@ package com.begentgroup.miniapplication.tstore;
 
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +19,7 @@ import com.begentgroup.miniapplication.R;
 import com.begentgroup.miniapplication.data.TStoreCategoryProduct;
 import com.begentgroup.miniapplication.data.TStoreProduct;
 import com.begentgroup.miniapplication.manager.NetworkManager;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -48,7 +48,8 @@ public class TStoreSearchFragment extends Fragment {
             @Override
             public void onItemClick(View view, TStoreProduct product) {
                 Intent intent = new Intent(getContext(), TStoreDetailActivity.class);
-                intent.setData(Uri.parse(product.getWebUrl()));
+//                intent.setData(Uri.parse(product.getWebUrl()));
+                intent.putExtra(TStoreDetailActivity.EXTRA_PRODUCT_ID, product.getProductId());
                 startActivity(intent);
             }
         });
@@ -63,6 +64,7 @@ public class TStoreSearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tstore_search, container, false);
         listView = (RecyclerView)view.findViewById(R.id.rv_list);
+        listView.addItemDecoration(new HorizontalDividerItemDecoration.Builder(getContext()).build());
         listView.setAdapter(mAdapter);
         mLayoutManager = new LinearLayoutManager(getContext());
         listView.setLayoutManager(mLayoutManager);

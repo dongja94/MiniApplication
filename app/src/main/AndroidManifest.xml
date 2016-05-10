@@ -3,7 +3,7 @@
     package="com.begentgroup.miniapplication">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -52,7 +52,8 @@
         <activity
             android:name=".chatting.ChattingActivity"
             android:label="@string/title_activity_chatting"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".utils.BrowserActivity"></activity>
     </application>
 
 </manifest>

@@ -10,6 +10,8 @@ import com.begentgroup.miniapplication.data.TStoreCategory;
 import com.begentgroup.miniapplication.data.TStoreCategoryProduct;
 import com.begentgroup.miniapplication.data.TStoreCategoryProductResult;
 import com.begentgroup.miniapplication.data.TStoreCategoryResult;
+import com.begentgroup.miniapplication.data.TStoreProduct;
+import com.begentgroup.miniapplication.data.TStoreProductDetailResult;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -204,6 +206,42 @@ public class NetworkManager {
                 if (response.isSuccessful()) {
                     TStoreCategoryProductResult data = gson.fromJson(response.body().charStream(), TStoreCategoryProductResult.class);
                     result.result = data.tstore;
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                } else {
+                    throw new IOException(response.message());
+                }
+            }
+        });
+        return request;
+    }
+
+    private static final String TSTORE_DETAIL_PRODUCT = TSTORE_SERVER + "/tstore/products/%s?version=1";
+
+    public Request getTStoreDetailProduct(Object tag, String productId,
+                                              OnResultListener<TStoreProduct> listener) {
+        String url = String.format(TSTORE_DETAIL_PRODUCT, productId);
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Accept","application/json")
+                .header("appKey","458a10f5-c07e-34b5-b2bd-4a891e024c2a")
+                .build();
+
+        final NetworkResult<TStoreProduct> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    TStoreProductDetailResult data = gson.fromJson(response.body().charStream(), TStoreProductDetailResult.class);
+                    data.tstore.product.makePreviewUrlList();
+                    result.result = data.tstore.product;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
                     throw new IOException(response.message());

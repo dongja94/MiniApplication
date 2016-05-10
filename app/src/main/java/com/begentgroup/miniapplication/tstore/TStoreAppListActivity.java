@@ -1,7 +1,6 @@
 package com.begentgroup.miniapplication.tstore;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,7 +47,8 @@ public class TStoreAppListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, TStoreProduct product) {
                 Intent intent = new Intent(TStoreAppListActivity.this, TStoreDetailActivity.class);
-                intent.setData(Uri.parse(product.getTinyUrl()));
+//                intent.setData(Uri.parse(product.getTinyUrl()));
+                intent.putExtra(TStoreDetailActivity.EXTRA_PRODUCT_ID, product.getProductId());
                 startActivity(intent);
             }
         });

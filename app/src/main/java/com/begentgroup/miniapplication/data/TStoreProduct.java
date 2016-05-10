@@ -1,5 +1,11 @@
 package com.begentgroup.miniapplication.data;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by dongja94 on 2016-05-09.
  */
@@ -15,6 +21,100 @@ public class TStoreProduct {
     String tinyUrl;
     String detailDescription;
     String productId;
+
+    String platform;
+    String developerId;
+    String osVersion;
+    String categoryCode;
+    @SerializedName("previewUrl")
+    String rawPreviewUrls;
+
+    List<String> previewUrlList = new ArrayList<String>();
+    public boolean makePreviewUrlList() {
+        if (rawPreviewUrls != null) {
+            String[] urls = rawPreviewUrls.split(";");
+            previewUrlList.addAll(Arrays.asList(urls));
+            return true;
+        }
+        return false;
+    }
+
+    int voterCount;
+    TStorePhoneModels models;
+    String categoryName;
+    String developerName;
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
+    public String getDeveloperId() {
+        return developerId;
+    }
+
+    public void setDeveloperId(String developerId) {
+        this.developerId = developerId;
+    }
+
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public void setOsVersion(String osVersion) {
+        this.osVersion = osVersion;
+    }
+
+    public String getCategoryCode() {
+        return categoryCode;
+    }
+
+    public void setCategoryCode(String categoryCode) {
+        this.categoryCode = categoryCode;
+    }
+
+    public List<String> getPreviewUrlList() {
+        return previewUrlList;
+    }
+
+    public void setPreviewUrlList(List<String> previewUrlList) {
+        this.previewUrlList = previewUrlList;
+    }
+
+    public int getVoterCount() {
+        return voterCount;
+    }
+
+    public void setVoterCount(int voterCount) {
+        this.voterCount = voterCount;
+    }
+
+    public TStorePhoneModels getModels() {
+        return models;
+    }
+
+    public void setModels(TStorePhoneModels models) {
+        this.models = models;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getDeveloperName() {
+        return developerName;
+    }
+
+    public void setDeveloperName(String developerName) {
+        this.developerName = developerName;
+    }
 
     public String getCategoryPath() {
         return categoryPath;
