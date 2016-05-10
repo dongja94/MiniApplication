@@ -54,24 +54,51 @@ public class TStoreSearchFragment extends Fragment {
         });
     }
 
+    LinearLayoutManager mLayoutManager;
+
+    boolean isLast = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tstore_search, container, false);
         listView = (RecyclerView)view.findViewById(R.id.rv_list);
         listView.setAdapter(mAdapter);
-        listView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mLayoutManager = new LinearLayoutManager(getContext());
+        listView.setLayoutManager(mLayoutManager);
+        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (isLast && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    getMoreData();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                int totalCount = mAdapter.getItemCount();
+                int lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+                if (totalCount > 0 && lastVisibleItem >= totalCount - 1) {
+                    isLast = true;
+                } else {
+                    isLast = false;
+                }
+            }
+        });
         keywordView = (EditText)view.findViewById(R.id.edit_keyword);
         Button btn = (Button)view.findViewById(R.id.btn_search);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String keyword = keywordView.getText().toString();
+                final String keyword = keywordView.getText().toString();
                 if (!TextUtils.isEmpty(keyword)) {
                     try {
                         NetworkManager.getInstance().getTStoreSearchProductList(getContext(), keyword, 1, 10, NetworkManager.SEARCH_PRODUCT_ORDER_R, new NetworkManager.OnResultListener<TStoreCategoryProduct>() {
                             @Override
                             public void onSuccess(Request request, TStoreCategoryProduct result) {
+                                mAdapter.setKeyword(keyword);
+                                mAdapter.setLastPage(1);
+                                mAdapter.setTotalCount(result.totalCount);
                                 mAdapter.clear();
                                 mAdapter.addAll(result.products.productList);
                             }
@@ -88,6 +115,32 @@ public class TStoreSearchFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    boolean isMoreData = false;
+    private void getMoreData() {
+        if (!isMoreData && mAdapter.isMore()) {
+            isMoreData = true;
+            final int page = mAdapter.getLastPage() + 1;
+            try {
+                NetworkManager.getInstance().getTStoreSearchProductList(getContext(), mAdapter.getKeyword(), page, 10, NetworkManager.SEARCH_PRODUCT_ORDER_R, new NetworkManager.OnResultListener<TStoreCategoryProduct>() {
+                    @Override
+                    public void onSuccess(Request request, TStoreCategoryProduct result) {
+                        mAdapter.addAll(result.products.productList);
+                        mAdapter.setLastPage(page);
+                        isMoreData = false;
+                    }
+
+                    @Override
+                    public void onFail(Request request, IOException exception) {
+                        isMoreData = false;
+                    }
+                });
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                isMoreData = false;
+            }
+        }
     }
 
 }

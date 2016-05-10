@@ -22,6 +22,43 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> {
         notifyDataSetChanged();
     }
 
+    private int totalCount = 0;
+
+    public int getTotalCount() {
+        return totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = totalCount;
+    }
+
+    private int lastPage = 0;
+
+    public int getLastPage() {
+        return lastPage;
+    }
+
+    public void setLastPage(int lastPage) {
+        this.lastPage = lastPage;
+    }
+
+    private String keyword;
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public boolean isMore() {
+//        if (totalCount == 0) return false;
+//        if (totalCount > items.size()) return true;
+//        return false;
+        return totalCount == 0 ? false : (totalCount > items.size() ? true : false);
+    }
+
     public void add(TStoreProduct product) {
         items.add(product);
         notifyDataSetChanged();
