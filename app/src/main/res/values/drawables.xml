@@ -5,4 +5,6 @@
     <item name="ic_menu_manage" type="drawable">@android:drawable/ic_menu_manage</item>
     <item name="ic_menu_share" type="drawable">@android:drawable/ic_menu_share</item>
     <item name="ic_menu_send" type="drawable">@android:drawable/ic_menu_send</item>
+    <drawable name="tab_header_normal">@android:color/transparent</drawable>
+    <drawable name="tab_header_selected">#00ff00</drawable>
 </resources>
