@@ -420,7 +420,7 @@ public class NetworkManager {
                                    String caption,
                                    File file,
                                    OnResultListener<FacebookUploadResult> listener) {
-        String url = String.format(FACEBOOK_POST, token);
+        String url = String.format(FACEBOOK_UPLOAD_PHOTO, token);
 
         RequestBody body = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
