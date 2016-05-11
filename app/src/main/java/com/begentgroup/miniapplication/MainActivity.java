@@ -7,16 +7,29 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.begentgroup.miniapplication.chatting.ChattingFragment;
+import com.begentgroup.miniapplication.data.MyInfo;
 import com.begentgroup.miniapplication.facebook.FacebookFragment;
+import com.begentgroup.miniapplication.manager.NetworkManager;
 import com.begentgroup.miniapplication.tstore.TStoreFragment;
 import com.begentgroup.miniapplication.youtube.YoutubeFragment;
+import com.bumptech.glide.Glide;
+import com.facebook.AccessToken;
+
+import java.io.IOException;
+
+import okhttp3.Request;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    ImageView profileView;
+    TextView nameView, emailView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +46,52 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+        profileView = (ImageView)headerView.findViewById(R.id.image_profile);
+        nameView = (TextView)headerView.findViewById(R.id.text_name);
+        emailView = (TextView)headerView.findViewById(R.id.text_email);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new TStoreFragment())
                     .commit();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setMyInfo();
+    }
+
+    public void setMyInfo() {
+        AccessToken token = AccessToken.getCurrentAccessToken();
+        if (token != null) {
+            NetworkManager.getInstance().getFacebookMyInfo(this, token.getToken(), new NetworkManager.OnResultListener<MyInfo>() {
+                @Override
+                public void onSuccess(Request request, MyInfo result) {
+                    nameView.setText(result.name);
+                    emailView.setText(result.email);
+                }
+
+                @Override
+                public void onFail(Request request, IOException exception) {
+
+                }
+            });
+            String url = "https://graph.facebook.com/v2.6/me/picture?type=large&access_token="+token.getToken();
+            Glide.with(MainActivity.this).load(url).into(profileView);
+//            NetworkManager.getInstance().getFacebookMyPicture(this, token.getToken(), new NetworkManager.OnResultListener<String>() {
+//                @Override
+//                public void onSuccess(Request request, String result) {
+//                    Glide.with(MainActivity.this).load(result).into(profileView);
+//                }
+//
+//                @Override
+//                public void onFail(Request request, IOException exception) {
+//
+//                }
+//            });
         }
     }
 
@@ -49,28 +103,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -47,6 +50,26 @@ public class FacebookFragment extends Fragment {
         mAdapter = new FeedAdapter();
         callbackManager = CallbackManager.Factory.create();
         loginManager = LoginManager.getInstance();
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_facebook, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_facebook_post) {
+            startActivity(new Intent(getContext(), FacebookWriteActivity.class));
+            return true;
+        } else if (id == R.id.menu_facebook_upload) {
+            startActivity(new Intent(getContext(), FacebookPhotoUploadActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

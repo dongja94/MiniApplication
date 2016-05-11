@@ -8,6 +8,8 @@ import android.os.Message;
 import com.begentgroup.miniapplication.MyApplication;
 import com.begentgroup.miniapplication.data.FacebookFeed;
 import com.begentgroup.miniapplication.data.FacebookFeedsResult;
+import com.begentgroup.miniapplication.data.MyInfo;
+import com.begentgroup.miniapplication.data.MyPictureResult;
 import com.begentgroup.miniapplication.data.TStoreCategory;
 import com.begentgroup.miniapplication.data.TStoreCategoryProduct;
 import com.begentgroup.miniapplication.data.TStoreCategoryProductResult;
@@ -279,6 +281,73 @@ public class NetworkManager {
                     FacebookFeedsResult data = gson.fromJson(response.body().charStream(), FacebookFeedsResult.class);
                     data.convertStringToDate();
                     result.result = data.feeds;
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                } else {
+                    throw new IOException(response.message());
+                }
+            }
+        });
+        return request;
+    }
+
+    private static final String FACEBOOK_MY_INFO = FACEBOOK_SERVER + "/v2.6/me?fields=id,name,email&access_token=%s";
+
+    public Request getFacebookMyInfo(Object tag, String token,
+                                    OnResultListener<MyInfo> listener) {
+        String url = String.format(FACEBOOK_MY_INFO, token);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        final NetworkResult<MyInfo> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    MyInfo data = gson.fromJson(response.body().charStream(), MyInfo.class);
+                    result.result = data;
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                } else {
+                    throw new IOException(response.message());
+                }
+            }
+        });
+        return request;
+    }
+
+    private static final String FACEBOOK_MY_PICTURE = FACEBOOK_SERVER + "/v2.6/me/picture?type=large&access_token=%s";
+
+    public Request getFacebookMyPicture(Object tag, String token,
+                                     OnResultListener<String> listener) {
+        String url = String.format(FACEBOOK_MY_PICTURE, token);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        final NetworkResult<String> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String text = response.body().string();
+                    MyPictureResult data = gson.fromJson(text, MyPictureResult.class);
+                    result.result = data.data.url;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
                     throw new IOException(response.message());
