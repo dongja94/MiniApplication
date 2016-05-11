@@ -120,7 +120,7 @@ public class LoginFragment extends Fragment {
                 }
             });
 
-            loginManager.logInWithReadPermissions(this, Arrays.asList("emial"));
+            loginManager.logInWithReadPermissions(this, Arrays.asList("email"));
         } else {
             loginManager.logOut();
         }

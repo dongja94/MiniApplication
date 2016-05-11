@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 
 import com.begentgroup.miniapplication.login.LoginActivity;
+import com.facebook.AccessToken;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -17,12 +18,23 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                finish();
-            }
-        }, 2000);
+        AccessToken token = AccessToken.getCurrentAccessToken();
+        if (token == null) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    finish();
+                }
+            }, 2000);
+        } else {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    finish();
+                }
+            }, 2000);
+        }
     }
 }
