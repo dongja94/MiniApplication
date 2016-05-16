@@ -4,11 +4,14 @@ package com.begentgroup.miniapplication.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.begentgroup.miniapplication.MainActivity;
 import com.begentgroup.miniapplication.R;
@@ -45,6 +48,11 @@ public class SignUpFragment extends Fragment {
                 String name = nameView.getText().toString();
                 final String email = emailView.getText().toString();
                 final String password = passwordView.getText().toString();
+                if (TextUtils.isEmpty(email) || !Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                        || TextUtils.isEmpty(password) || password.length() < 8) {
+                    Toast.makeText(getContext(), "invalid value", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 NetworkManager.getInstance().signup(getContext(), name, email, password, "", new NetworkManager.OnResultListener<MyResult<User>>() {
                     @Override
                     public void onSuccess(Request request, MyResult<User> result) {
