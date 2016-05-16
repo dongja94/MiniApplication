@@ -20,12 +20,15 @@ import com.begentgroup.miniapplication.data.TStoreProduct;
 import com.begentgroup.miniapplication.data.TStoreProductDetailResult;
 import com.begentgroup.miniapplication.login.MyResult;
 import com.begentgroup.miniapplication.login.MyResultError;
-import com.begentgroup.miniapplication.login.MyResultUser;
+import com.begentgroup.miniapplication.login.MyResultStatus;
+import com.begentgroup.miniapplication.login.User;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.URLEncoder;
@@ -49,6 +52,7 @@ import okhttp3.Response;
  */
 public class NetworkManager {
     private static NetworkManager instance;
+
     public static NetworkManager getInstance() {
         if (instance == null) {
             instance = new NetworkManager();
@@ -59,6 +63,7 @@ public class NetworkManager {
     private static final int DEFAULT_CACHE_SIZE = 50 * 1024 * 1024;
     private static final String DEFAULT_CACHE_DIR = "miniapp";
     OkHttpClient mClient;
+
     private NetworkManager() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         Context context = MyApplication.getContext();
@@ -80,6 +85,7 @@ public class NetworkManager {
 
     public interface OnResultListener<T> {
         public void onSuccess(Request request, T result);
+
         public void onFail(Request request, IOException exception);
     }
 
@@ -94,12 +100,12 @@ public class NetworkManager {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            NetworkResult result = (NetworkResult)msg.obj;
+            NetworkResult result = (NetworkResult) msg.obj;
             switch (msg.what) {
-                case MESSAGE_SUCCESS :
+                case MESSAGE_SUCCESS:
                     result.listener.onSuccess(result.request, result.result);
                     break;
-                case MESSAGE_FAIL :
+                case MESSAGE_FAIL:
                     result.listener.onFail(result.request, result.excpetion);
                     break;
             }
@@ -119,11 +125,12 @@ public class NetworkManager {
 
     private static final String TSTORE_SERVER = "http://apis.skplanetx.com";
     private static final String TSTORE_CATEGORY_URL = TSTORE_SERVER + "/tstore/categories?version=1";
+
     public Request getTStoreCategory(Object tag, OnResultListener<List<TStoreCategory>> listener) {
         Request request = new Request.Builder()
                 .url(TSTORE_CATEGORY_URL)
-                .header("Accept","application/json")
-                .header("appKey","458a10f5-c07e-34b5-b2bd-4a891e024c2a")
+                .header("Accept", "application/json")
+                .header("appKey", "458a10f5-c07e-34b5-b2bd-4a891e024c2a")
                 .build();
         final NetworkResult<List<TStoreCategory>> result = new NetworkResult<>();
         result.request = request;
@@ -142,7 +149,8 @@ public class NetworkManager {
                     result.result = data.tstore.categories.categoryList;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -161,8 +169,8 @@ public class NetworkManager {
         String url = String.format(TSTORE_CATEGORY_PRODUCT_URL, code, page, count, order);
         Request request = new Request.Builder()
                 .url(url)
-                .header("Accept","application/json")
-                .header("appKey","458a10f5-c07e-34b5-b2bd-4a891e024c2a")
+                .header("Accept", "application/json")
+                .header("appKey", "458a10f5-c07e-34b5-b2bd-4a891e024c2a")
                 .build();
 
         final NetworkResult<TStoreCategoryProduct> result = new NetworkResult<>();
@@ -182,7 +190,8 @@ public class NetworkManager {
                     result.result = data.tstore;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -196,12 +205,12 @@ public class NetworkManager {
     public static final String SEARCH_PRODUCT_ORDER_D = "D";
 
     public Request getTStoreSearchProductList(Object tag, String keyword, int page, int count, String order,
-                                                OnResultListener<TStoreCategoryProduct> listener) throws UnsupportedEncodingException {
-        String url = String.format(TSTORE_SEARCH_PRODUCT_URL, URLEncoder.encode(keyword,"utf-8"), page, count, order);
+                                              OnResultListener<TStoreCategoryProduct> listener) throws UnsupportedEncodingException {
+        String url = String.format(TSTORE_SEARCH_PRODUCT_URL, URLEncoder.encode(keyword, "utf-8"), page, count, order);
         Request request = new Request.Builder()
                 .url(url)
-                .header("Accept","application/json")
-                .header("appKey","458a10f5-c07e-34b5-b2bd-4a891e024c2a")
+                .header("Accept", "application/json")
+                .header("appKey", "458a10f5-c07e-34b5-b2bd-4a891e024c2a")
                 .build();
 
         final NetworkResult<TStoreCategoryProduct> result = new NetworkResult<>();
@@ -221,7 +230,8 @@ public class NetworkManager {
                     result.result = data.tstore;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -231,12 +241,12 @@ public class NetworkManager {
     private static final String TSTORE_DETAIL_PRODUCT = TSTORE_SERVER + "/tstore/products/%s?version=1";
 
     public Request getTStoreDetailProduct(Object tag, String productId,
-                                              OnResultListener<TStoreProduct> listener) {
+                                          OnResultListener<TStoreProduct> listener) {
         String url = String.format(TSTORE_DETAIL_PRODUCT, productId);
         Request request = new Request.Builder()
                 .url(url)
-                .header("Accept","application/json")
-                .header("appKey","458a10f5-c07e-34b5-b2bd-4a891e024c2a")
+                .header("Accept", "application/json")
+                .header("appKey", "458a10f5-c07e-34b5-b2bd-4a891e024c2a")
                 .build();
 
         final NetworkResult<TStoreProduct> result = new NetworkResult<>();
@@ -257,7 +267,8 @@ public class NetworkManager {
                     result.result = data.tstore.product;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -268,7 +279,7 @@ public class NetworkManager {
     private static final String FACEBOOK_FEEDS = FACEBOOK_SERVER + "/v2.6/me/feed?access_token=%s";
 
     public Request getFacebookFeeds(Object tag, String token,
-                                          OnResultListener<List<FacebookFeed>> listener) {
+                                    OnResultListener<List<FacebookFeed>> listener) {
         String url = String.format(FACEBOOK_FEEDS, token);
         Request request = new Request.Builder()
                 .url(url)
@@ -292,7 +303,8 @@ public class NetworkManager {
                     result.result = data.feeds;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -302,7 +314,7 @@ public class NetworkManager {
     private static final String FACEBOOK_MY_INFO = FACEBOOK_SERVER + "/v2.6/me?fields=id,name,email&access_token=%s";
 
     public Request getFacebookMyInfo(Object tag, String token,
-                                    OnResultListener<MyInfo> listener) {
+                                     OnResultListener<MyInfo> listener) {
         String url = String.format(FACEBOOK_MY_INFO, token);
         Request request = new Request.Builder()
                 .url(url)
@@ -325,7 +337,8 @@ public class NetworkManager {
                     result.result = data;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -335,7 +348,7 @@ public class NetworkManager {
     private static final String FACEBOOK_MY_PICTURE = FACEBOOK_SERVER + "/v2.6/me/picture?type=large&access_token=%s";
 
     public Request getFacebookMyPicture(Object tag, String token,
-                                     OnResultListener<String> listener) {
+                                        OnResultListener<String> listener) {
         String url = String.format(FACEBOOK_MY_PICTURE, token);
         Request request = new Request.Builder()
                 .url(url)
@@ -359,7 +372,8 @@ public class NetworkManager {
                     result.result = data.data.url;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -375,7 +389,7 @@ public class NetworkManager {
                                    String picture,
                                    String name,
                                    String description,
-                                        OnResultListener<String> listener) {
+                                   OnResultListener<String> listener) {
         String url = String.format(FACEBOOK_POST, token);
 
         RequestBody body = new FormBody.Builder()
@@ -410,7 +424,8 @@ public class NetworkManager {
                     result.result = data.id;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -420,9 +435,9 @@ public class NetworkManager {
     private static final String FACEBOOK_UPLOAD_PHOTO = FACEBOOK_SERVER + "/v2.6/me/photos?access_token=%s";
 
     public Request getFacebookUpload(Object tag, String token,
-                                   String caption,
-                                   File file,
-                                   OnResultListener<FacebookUploadResult> listener) {
+                                     String caption,
+                                     File file,
+                                     OnResultListener<FacebookUploadResult> listener) {
         String url = String.format(FACEBOOK_UPLOAD_PHOTO, token);
 
         RequestBody body = new MultipartBody.Builder()
@@ -455,7 +470,8 @@ public class NetworkManager {
                     result.result = data;
                     mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -466,14 +482,14 @@ public class NetworkManager {
     private static final String URL_SIGN_UP = MY_SERVER + "/signup";
 
     public Request signup(Object tag, String username,
-                                     String email,
-                                     String password,
-                                     String registrationId,
-                                     OnResultListener<MyResultUser> listener) {
+                          String email,
+                          String password,
+                          String registrationId,
+                          OnResultListener<MyResult<User>> listener) {
         RequestBody body = new FormBody.Builder()
                 .add("username", username)
                 .add("password", password)
-                .add("email",email)
+                .add("email", email)
                 .add("registrationId", registrationId)
                 .build();
 
@@ -482,7 +498,7 @@ public class NetworkManager {
                 .post(body)
                 .build();
 
-        final NetworkResult<MyResultUser> result = new NetworkResult<>();
+        final NetworkResult<MyResult<User>> result = new NetworkResult<>();
         result.request = request;
         result.listener = listener;
         mClient.newCall(request).enqueue(new Callback() {
@@ -496,11 +512,21 @@ public class NetworkManager {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String text = response.body().string();
-                    MyResultUser data = gson.fromJson(text, MyResultUser.class);
-                    result.result = data;
-                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
+                    if (status.code == 1) {
+                        Type type = new TypeToken<MyResult<User>>() {
+                        }.getType();
+                        MyResult<User> data = gson.fromJson(text, type);
+                        result.result = data;
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    } else {
+                        MyResultError data = gson.fromJson(text, MyResultError.class);
+                        result.excpetion = new IOException(data.result);
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                    }
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });
@@ -513,10 +539,10 @@ public class NetworkManager {
                           String email,
                           String password,
                           String registrationId,
-                          OnResultListener<MyResultUser> listener) {
+                          OnResultListener<MyResult<User>> listener) {
         RequestBody body = new FormBody.Builder()
                 .add("password", password)
-                .add("email",email)
+                .add("email", email)
                 .add("registrationId", registrationId)
                 .build();
 
@@ -525,7 +551,7 @@ public class NetworkManager {
                 .post(body)
                 .build();
 
-        final NetworkResult<MyResultUser> result = new NetworkResult<>();
+        final NetworkResult<MyResult<User>> result = new NetworkResult<>();
         result.request = request;
         result.listener = listener;
         mClient.newCall(request).enqueue(new Callback() {
@@ -539,17 +565,21 @@ public class NetworkManager {
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     String text = response.body().string();
-                    MyResult status = gson.fromJson(text, MyResult.class);
+                    MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
                     if (status.code == 1) {
-                        MyResultUser data = gson.fromJson(text, MyResultUser.class);
+                        Type type = new TypeToken<MyResult<User>>() {
+                        }.getType();
+                        MyResult<User> data = gson.fromJson(text, type);
                         result.result = data;
                         mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
                     } else {
                         MyResultError data = gson.fromJson(text, MyResultError.class);
-                        throw new IOException(data.result);
+                        result.excpetion = new IOException(data.result);
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                     }
                 } else {
-                    throw new IOException(response.message());
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
                 }
             }
         });

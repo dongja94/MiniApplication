@@ -45,9 +45,9 @@ public class SignUpFragment extends Fragment {
                 String name = nameView.getText().toString();
                 final String email = emailView.getText().toString();
                 final String password = passwordView.getText().toString();
-                NetworkManager.getInstance().signup(getContext(), name, email, password, "", new NetworkManager.OnResultListener<MyResultUser>() {
+                NetworkManager.getInstance().signup(getContext(), name, email, password, "", new NetworkManager.OnResultListener<MyResult<User>>() {
                     @Override
-                    public void onSuccess(Request request, MyResultUser result) {
+                    public void onSuccess(Request request, MyResult<User> result) {
                         if (result.code == 1) {
                             PropertyManager.getInstance().setLogin(true);
                             PropertyManager.getInstance().setUser(result.result);

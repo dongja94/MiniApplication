@@ -9,7 +9,8 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.begentgroup.miniapplication.login.LoginActivity;
-import com.begentgroup.miniapplication.login.MyResultUser;
+import com.begentgroup.miniapplication.login.MyResult;
+import com.begentgroup.miniapplication.login.User;
 import com.begentgroup.miniapplication.manager.NetworkManager;
 import com.begentgroup.miniapplication.manager.PropertyManager;
 
@@ -29,9 +30,9 @@ public class SplashActivity extends AppCompatActivity {
         String email = PropertyManager.getInstance().getEmail();
         if (!TextUtils.isEmpty(email)) {
             String password = PropertyManager.getInstance().getPassword();
-            NetworkManager.getInstance().signin(this, email, password, "", new NetworkManager.OnResultListener<MyResultUser>() {
+            NetworkManager.getInstance().signin(this, email, password, "", new NetworkManager.OnResultListener<MyResult<User>>() {
                 @Override
-                public void onSuccess(Request request, MyResultUser result) {
+                public void onSuccess(Request request, MyResult<User> result) {
                     if (result.code == 1) {
                         PropertyManager.getInstance().setLogin(true);
                         PropertyManager.getInstance().setUser(result.result);

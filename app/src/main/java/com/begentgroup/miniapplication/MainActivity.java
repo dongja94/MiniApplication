@@ -1,5 +1,6 @@
 package com.begentgroup.miniapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,7 +16,9 @@ import android.widget.TextView;
 import com.begentgroup.miniapplication.chatting.ChattingFragment;
 import com.begentgroup.miniapplication.data.MyInfo;
 import com.begentgroup.miniapplication.facebook.FacebookFragment;
+import com.begentgroup.miniapplication.login.LoginActivity;
 import com.begentgroup.miniapplication.manager.NetworkManager;
+import com.begentgroup.miniapplication.manager.PropertyManager;
 import com.begentgroup.miniapplication.tstore.TStoreFragment;
 import com.begentgroup.miniapplication.youtube.YoutubeFragment;
 import com.bumptech.glide.Glide;
@@ -127,6 +130,13 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, new ChattingFragment())
                     .commit();
+        } else if (id == R.id.nav_logout) {
+            PropertyManager.getInstance().setEmail("");
+            PropertyManager.getInstance().setPassword("");
+            PropertyManager.getInstance().setLogin(false);
+            PropertyManager.getInstance().setUser(null);
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
