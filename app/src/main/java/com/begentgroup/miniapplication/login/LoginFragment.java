@@ -146,6 +146,30 @@ public class LoginFragment extends Fragment {
             loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
+                    AccessToken token = AccessToken.getCurrentAccessToken();
+                    NetworkManager.getInstance().facebookSignIn(getContext(), token.getToken(), "",
+                            new NetworkManager.OnResultListener<MyResult>() {
+                                @Override
+                                public void onSuccess(Request request, MyResult result) {
+                                    if (result.code == 1) {
+                                        User user = (User)result.result;
+                                        // login success
+                                        PropertyManager.getInstance().setLogin(true);
+                                        PropertyManager.getInstance().setUser(user);
+                                        PropertyManager.getInstance().setFacebookId(user.facebookId);
+                                        startActivity(new Intent(getContext(), MainActivity.class));
+                                        getActivity().finish();
+                                    } else if (result.code == 3) {
+                                        FacebookInfo info = (FacebookInfo)result.result;
+                                        ((LoginActivity)getActivity()).changeFacebookSignUp(info);
+                                    }
+                                }
+
+                                @Override
+                                public void onFail(Request request, IOException exception) {
+
+                                }
+                            });
                     startActivity(new Intent(getContext(), MainActivity.class));
                     getActivity().finish();
                 }

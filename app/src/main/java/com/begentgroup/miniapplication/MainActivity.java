@@ -23,6 +23,7 @@ import com.begentgroup.miniapplication.tstore.TStoreFragment;
 import com.begentgroup.miniapplication.youtube.YoutubeFragment;
 import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 
 import java.io.IOException;
 
@@ -135,6 +136,12 @@ public class MainActivity extends AppCompatActivity
             PropertyManager.getInstance().setPassword("");
             PropertyManager.getInstance().setLogin(false);
             PropertyManager.getInstance().setUser(null);
+            PropertyManager.getInstance().setFacebookId("");
+            AccessToken token = AccessToken.getCurrentAccessToken();
+            if (token != null) {
+                LoginManager loginManager = LoginManager.getInstance();
+                loginManager.logOut();
+            }
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }

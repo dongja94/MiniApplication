@@ -18,6 +18,7 @@ import com.begentgroup.miniapplication.data.TStoreCategoryProductResult;
 import com.begentgroup.miniapplication.data.TStoreCategoryResult;
 import com.begentgroup.miniapplication.data.TStoreProduct;
 import com.begentgroup.miniapplication.data.TStoreProductDetailResult;
+import com.begentgroup.miniapplication.login.FacebookInfo;
 import com.begentgroup.miniapplication.login.MyResult;
 import com.begentgroup.miniapplication.login.MyResultError;
 import com.begentgroup.miniapplication.login.MyResultStatus;
@@ -586,5 +587,112 @@ public class NetworkManager {
         return request;
     }
 
+    private static final String URL_FACEBOOK_SIGN_IN = MY_SERVER + "/facebooksignin";
+
+    public Request facebookSignIn(Object tag,
+                          String accessToken,
+                          String registrationId,
+                          OnResultListener<MyResult> listener) {
+        RequestBody body = new FormBody.Builder()
+                .add("access_token", accessToken)
+                .add("registrationId", registrationId)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(URL_FACEBOOK_SIGN_IN)
+                .post(body)
+                .build();
+
+        final NetworkResult<MyResult> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String text = response.body().string();
+                    MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
+                    if (status.code == 1) {
+                        Type type = new TypeToken<MyResult<User>>() {
+                        }.getType();
+                        MyResult<User> data = gson.fromJson(text, type);
+                        result.result = data;
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    } else if (status.code == 3) {
+                        Type type = new TypeToken<MyResult<FacebookInfo>>(){}.getType();
+                        MyResult<FacebookInfo> data = gson.fromJson(text, type);
+                        result.result = data;
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    } else {
+                        MyResultError data = gson.fromJson(text, MyResultError.class);
+                        result.excpetion = new IOException(data.result);
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                    }
+                } else {
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                }
+            }
+        });
+        return request;
+    }
+
+
+    private static final String URL_FACEBOOK_SIGN_UP = MY_SERVER + "/facebooksignup";
+
+    public Request facebookSignUp(Object tag,
+                                  String username,
+                                  String email,
+                                  OnResultListener<MyResult<User>> listener) {
+        RequestBody body = new FormBody.Builder()
+                .add("username", username)
+                .add("email", email)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(URL_FACEBOOK_SIGN_UP)
+                .post(body)
+                .build();
+
+        final NetworkResult<MyResult<User>> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String text = response.body().string();
+                    MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
+                    if (status.code == 1) {
+                        Type type = new TypeToken<MyResult<User>>() {
+                        }.getType();
+                        MyResult<User> data = gson.fromJson(text, type);
+                        result.result = data;
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    } else {
+                        MyResultError data = gson.fromJson(text, MyResultError.class);
+                        result.excpetion = new IOException(data.result);
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                    }
+                } else {
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                }
+            }
+        });
+        return request;
+    }
 
 }

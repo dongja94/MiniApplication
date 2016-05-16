@@ -24,4 +24,11 @@ public class LoginActivity extends AppCompatActivity {
                 .addToBackStack(null)
                 .commit();
     }
+
+    public void changeFacebookSignUp(FacebookInfo info) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, FacebookSignUpFragment.newInstance(info))
+                .addToBackStack(null)
+                .commit();
+    }
 }

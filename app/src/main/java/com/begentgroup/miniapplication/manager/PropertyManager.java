@@ -43,6 +43,16 @@ public class PropertyManager {
         return mPrefs.getString(FIELD_PASSWORD, "");
     }
 
+
+    public static final String FIELD_FACEBOOK_ID = "facebookid";
+    public void setFacebookId(String facebookId) {
+        mEditor.putString(FIELD_FACEBOOK_ID, facebookId);
+        mEditor.commit();
+    }
+    public String getFacebookId() {
+        return mPrefs.getString(FIELD_FACEBOOK_ID, "");
+    }
+
     private boolean isLogin = false;
     public void setLogin(boolean login) {
         isLogin = login;

@@ -13,6 +13,8 @@ import com.begentgroup.miniapplication.login.MyResult;
 import com.begentgroup.miniapplication.login.User;
 import com.begentgroup.miniapplication.manager.NetworkManager;
 import com.begentgroup.miniapplication.manager.PropertyManager;
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 
 import java.io.IOException;
 
@@ -49,6 +51,67 @@ public class SplashActivity extends AppCompatActivity {
                 }
             });
         } else {
+            String facebookId = PropertyManager.getInstance().getFacebookId();
+            if (!TextUtils.isEmpty(facebookId)) {
+                AccessToken token = AccessToken.getCurrentAccessToken();
+                if (token == null) {
+                    PropertyManager.getInstance().setFacebookId("");
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    }, 2000);
+                } else {
+                    if (facebookId.equals(token.getUserId())) {
+                        NetworkManager.getInstance().facebookSignIn(this, token.getToken(), "", new NetworkManager.OnResultListener<MyResult>() {
+                            @Override
+                            public void onSuccess(Request request, MyResult result) {
+                                if (result.code == 1) {
+                                    User user = (User)result.result;
+                                    PropertyManager.getInstance().setLogin(true);
+                                    PropertyManager.getInstance().setUser(user);
+                                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                                    finish();
+                                } else {
+                                    PropertyManager.getInstance().setFacebookId("");
+                                    LoginManager.getInstance().logOut();
+                                    mHandler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                                            finish();
+                                        }
+                                    }, 2000);
+                                }
+
+                            }
+
+                            @Override
+                            public void onFail(Request request, IOException exception) {
+                                PropertyManager.getInstance().setFacebookId("");
+                                LoginManager.getInstance().logOut();
+                                mHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                                        finish();
+                                    }
+                                }, 2000);
+                            }
+                        });
+                    } else {
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                                finish();
+                            }
+                        }, 2000);
+                    }
+                }
+            }
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -57,23 +120,5 @@ public class SplashActivity extends AppCompatActivity {
                 }
             },2000);
         }
-//        AccessToken token = AccessToken.getCurrentAccessToken();
-//        if (token == null) {
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-//                    finish();
-//                }
-//            }, 2000);
-//        } else {
-//            mHandler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                   startActivity(new Intent(SplashActivity.this, MainActivity.class));
-//                    finish();
-//                }
-//            }, 2000);
-//        }
     }
 }
