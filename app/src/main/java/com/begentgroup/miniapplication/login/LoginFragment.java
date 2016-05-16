@@ -9,9 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.begentgroup.miniapplication.MainActivity;
 import com.begentgroup.miniapplication.R;
+import com.begentgroup.miniapplication.manager.NetworkManager;
+import com.begentgroup.miniapplication.manager.PropertyManager;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -20,7 +24,10 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
+import java.io.IOException;
 import java.util.Arrays;
+
+import okhttp3.Request;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,14 +39,16 @@ public class LoginFragment extends Fragment {
         // Required empty public constructor
     }
 
-    Button loginButton;
+    Button facebookLoginButton;
+
+    EditText emailView, passwordView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        loginButton = (Button)view.findViewById(R.id.btn_login_facebook);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        facebookLoginButton = (Button)view.findViewById(R.id.btn_login_facebook);
+        facebookLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 login();
@@ -52,6 +61,38 @@ public class LoginFragment extends Fragment {
                 signup();
             }
         });
+
+        emailView = (EditText)view.findViewById(R.id.edit_email);
+        passwordView = (EditText)view.findViewById(R.id.edit_password);
+
+        btn = (Button)view.findViewById(R.id.btn_login);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String email = emailView.getText().toString();
+                final String password = passwordView.getText().toString();
+                NetworkManager.getInstance().signin(getContext(), email, password, "",
+                        new NetworkManager.OnResultListener<MyResultUser>(){
+                            @Override
+                            public void onSuccess(Request request, MyResultUser result) {
+                                if (result.code == 1) {
+                                    PropertyManager.getInstance().setLogin(true);
+                                    PropertyManager.getInstance().setUser(result.result);
+                                    PropertyManager.getInstance().setEmail(email);
+                                    PropertyManager.getInstance().setPassword(password);
+                                    startActivity(new Intent(getContext(), MainActivity.class));
+                                    getActivity().finish();
+                                }
+                            }
+
+                            @Override
+                            public void onFail(Request request, IOException exception) {
+                                Toast.makeText(getContext(), "error : " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
         return view;
     }
     CallbackManager callbackManager;
@@ -89,9 +130,9 @@ public class LoginFragment extends Fragment {
 
     private void updateButtonText() {
         if (isLogin()) {
-            loginButton.setText("logout");
+            facebookLoginButton.setText("logout");
         } else {
-            loginButton.setText("login");
+            facebookLoginButton.setText("login");
         }
     }
 
@@ -133,7 +174,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void signup() {
-
+        ((LoginActivity)getActivity()).changeSignUp();
     }
 
 }

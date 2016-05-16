@@ -18,6 +18,9 @@ import com.begentgroup.miniapplication.data.TStoreCategoryProductResult;
 import com.begentgroup.miniapplication.data.TStoreCategoryResult;
 import com.begentgroup.miniapplication.data.TStoreProduct;
 import com.begentgroup.miniapplication.data.TStoreProductDetailResult;
+import com.begentgroup.miniapplication.login.MyResult;
+import com.begentgroup.miniapplication.login.MyResultError;
+import com.begentgroup.miniapplication.login.MyResultUser;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -458,5 +461,100 @@ public class NetworkManager {
         });
         return request;
     }
+
+    private static final String MY_SERVER = "https://dongjaeducation.appspot.com";
+    private static final String URL_SIGN_UP = MY_SERVER + "/signup";
+
+    public Request signup(Object tag, String username,
+                                     String email,
+                                     String password,
+                                     String registrationId,
+                                     OnResultListener<MyResultUser> listener) {
+        RequestBody body = new FormBody.Builder()
+                .add("username", username)
+                .add("password", password)
+                .add("email",email)
+                .add("registrationId", registrationId)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(URL_SIGN_UP)
+                .post(body)
+                .build();
+
+        final NetworkResult<MyResultUser> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String text = response.body().string();
+                    MyResultUser data = gson.fromJson(text, MyResultUser.class);
+                    result.result = data;
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                } else {
+                    throw new IOException(response.message());
+                }
+            }
+        });
+        return request;
+    }
+
+    private static final String URL_SIGN_IN = MY_SERVER + "/signin";
+
+    public Request signin(Object tag,
+                          String email,
+                          String password,
+                          String registrationId,
+                          OnResultListener<MyResultUser> listener) {
+        RequestBody body = new FormBody.Builder()
+                .add("password", password)
+                .add("email",email)
+                .add("registrationId", registrationId)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(URL_SIGN_IN)
+                .post(body)
+                .build();
+
+        final NetworkResult<MyResultUser> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String text = response.body().string();
+                    MyResult status = gson.fromJson(text, MyResult.class);
+                    if (status.code == 1) {
+                        MyResultUser data = gson.fromJson(text, MyResultUser.class);
+                        result.result = data;
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    } else {
+                        MyResultError data = gson.fromJson(text, MyResultError.class);
+                        throw new IOException(data.result);
+                    }
+                } else {
+                    throw new IOException(response.message());
+                }
+            }
+        });
+        return request;
+    }
+
 
 }

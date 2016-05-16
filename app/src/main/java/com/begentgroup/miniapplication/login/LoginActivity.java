@@ -17,4 +17,11 @@ public class LoginActivity extends AppCompatActivity {
                     .commit();
         }
     }
+
+    public void changeSignUp() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new SignUpFragment())
+                .addToBackStack(null)
+                .commit();
+    }
 }
