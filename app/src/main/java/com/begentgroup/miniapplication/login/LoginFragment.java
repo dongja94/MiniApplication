@@ -170,8 +170,8 @@ public class LoginFragment extends Fragment {
 
                                 }
                             });
-                    startActivity(new Intent(getContext(), MainActivity.class));
-                    getActivity().finish();
+//                    startActivity(new Intent(getContext(), MainActivity.class));
+//                    getActivity().finish();
                 }
 
                 @Override
