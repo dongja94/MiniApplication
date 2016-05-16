@@ -80,8 +80,7 @@ public class LoginFragment extends Fragment {
                                     PropertyManager.getInstance().setUser(result.result);
                                     PropertyManager.getInstance().setEmail(email);
                                     PropertyManager.getInstance().setPassword(password);
-                                    startActivity(new Intent(getContext(), MainActivity.class));
-                                    getActivity().finish();
+                                    goMainActivity();
                                 }
                             }
 
@@ -130,9 +129,9 @@ public class LoginFragment extends Fragment {
 
     private void updateButtonText() {
         if (isLogin()) {
-            facebookLoginButton.setText("logout");
+            facebookLoginButton.setText("facebook logout");
         } else {
-            facebookLoginButton.setText("login");
+            facebookLoginButton.setText("facebook login");
         }
     }
 
@@ -157,8 +156,7 @@ public class LoginFragment extends Fragment {
                                         PropertyManager.getInstance().setLogin(true);
                                         PropertyManager.getInstance().setUser(user);
                                         PropertyManager.getInstance().setFacebookId(user.facebookId);
-                                        startActivity(new Intent(getContext(), MainActivity.class));
-                                        getActivity().finish();
+                                        goMainActivity();
                                     } else if (result.code == 3) {
                                         FacebookInfo info = (FacebookInfo)result.result;
                                         ((LoginActivity)getActivity()).changeFacebookSignUp(info);
@@ -167,11 +165,8 @@ public class LoginFragment extends Fragment {
 
                                 @Override
                                 public void onFail(Request request, IOException exception) {
-
                                 }
                             });
-//                    startActivity(new Intent(getContext(), MainActivity.class));
-//                    getActivity().finish();
                 }
 
                 @Override
@@ -189,6 +184,11 @@ public class LoginFragment extends Fragment {
         } else {
             loginManager.logOut();
         }
+    }
+
+    private void goMainActivity() {
+        startActivity(new Intent(getContext(), MainActivity.class));
+        getActivity().finish();
     }
 
     @Override

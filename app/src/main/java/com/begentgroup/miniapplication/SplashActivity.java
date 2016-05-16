@@ -38,16 +38,14 @@ public class SplashActivity extends AppCompatActivity {
                     if (result.code == 1) {
                         PropertyManager.getInstance().setLogin(true);
                         PropertyManager.getInstance().setUser(result.result);
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                        finish();
+                        goMainActivity();
                     }
                 }
 
                 @Override
                 public void onFail(Request request, IOException exception) {
                     Toast.makeText(SplashActivity.this, "error : " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    finish();
+                    goLoginActivity();
                 }
             });
         } else {
@@ -56,13 +54,7 @@ public class SplashActivity extends AppCompatActivity {
                 AccessToken token = AccessToken.getCurrentAccessToken();
                 if (token == null) {
                     PropertyManager.getInstance().setFacebookId("");
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                            finish();
-                        }
-                    }, 2000);
+                    goLoginActivity();
                 } else {
                     if (facebookId.equals(token.getUserId())) {
                         NetworkManager.getInstance().facebookSignIn(this, token.getToken(), "", new NetworkManager.OnResultListener<MyResult>() {
@@ -72,18 +64,11 @@ public class SplashActivity extends AppCompatActivity {
                                     User user = (User)result.result;
                                     PropertyManager.getInstance().setLogin(true);
                                     PropertyManager.getInstance().setUser(user);
-                                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                                    finish();
+                                    goMainActivity();
                                 } else {
                                     PropertyManager.getInstance().setFacebookId("");
                                     LoginManager.getInstance().logOut();
-                                    mHandler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                                            finish();
-                                        }
-                                    }, 2000);
+                                    goLoginActivity();
                                 }
 
                             }
@@ -92,33 +77,33 @@ public class SplashActivity extends AppCompatActivity {
                             public void onFail(Request request, IOException exception) {
                                 PropertyManager.getInstance().setFacebookId("");
                                 LoginManager.getInstance().logOut();
-                                mHandler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                                        finish();
-                                    }
-                                }, 2000);
+                                goLoginActivity();
                             }
                         });
                     } else {
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                                finish();
-                            }
-                        }, 2000);
+                        PropertyManager.getInstance().setFacebookId("");
+                        LoginManager.getInstance().logOut();
+                        goLoginActivity();
                     }
                 }
+            } else {
+                goLoginActivity();
             }
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-                    finish();
-                }
-            },2000);
         }
+    }
+
+    private void goMainActivity() {
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+        finish();
+    }
+
+    private void goLoginActivity() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                finish();
+            }
+        }, 2000);
     }
 }
