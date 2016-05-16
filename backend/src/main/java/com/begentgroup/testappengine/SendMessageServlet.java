@@ -30,6 +30,7 @@ public class SendMessageServlet extends HttpServlet {
             chatMessage.message = msg;
             DataManager.getInstance().addChatMessage(chatMessage);
             Message message = new Message.Builder().addData("type","chat")
+                    .addData("sender", "" + user.id)
                     .addData("message","add message").build();
             com.google.android.gcm.server.Result result = sender.send(message, receiver.registrationId, 3);
             if (result.getMessageId() != null) {

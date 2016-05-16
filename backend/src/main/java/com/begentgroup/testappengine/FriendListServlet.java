@@ -16,7 +16,7 @@ public class FriendListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User)req.getSession().getAttribute("User");
         if (user != null) {
-            List<User> list = DataManager.getInstance().getUserList(null, 0, 10);
+            List<User> list = DataManager.getInstance().getUserList(user, null, 0, 10);
             Utility.responseSuccessMessage(resp, list);
             return;
         }

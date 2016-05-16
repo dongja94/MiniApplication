@@ -20,13 +20,15 @@ public class MessageListServlet extends HttpServlet {
         User user = (User)req.getSession().getAttribute("User");
         if (user != null) {
             String lastDateText = req.getParameter("lastDate");
+            Date date;
             try {
-                Date date = Utility.convertStringToDate(lastDateText);
-                List<ChatMessage> list = DataManager.getInstance().getChatMessage(user, date);
-                Utility.responseSuccessMessage(resp, ChatMessageClient.convertChatMessage(list));
+                date = Utility.convertStringToDate(lastDateText);
             } catch (ParseException e) {
                 e.printStackTrace();
+                date = new Date(0);
             }
+            List<ChatMessage> list = DataManager.getInstance().getChatMessage(user, date);
+            Utility.responseSuccessMessage(resp, ChatMessageClient.convertChatMessage(list));
             return;
         }
         Utility.responseErrorMessage(resp, "Not login");
