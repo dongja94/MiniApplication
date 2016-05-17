@@ -7,9 +7,7 @@ import java.util.List;
  * Created by dongja94 on 2016-05-13.
  */
 public class ChatMessageClient {
-    long senderId;
-    String senderName;
-    String senderEmail;
+    User sender;
     String message;
     String date;
 
@@ -18,9 +16,9 @@ public class ChatMessageClient {
         for(ChatMessage chat : chatlist) {
             ChatMessageClient cmc = new ChatMessageClient();
             User sender = chat.sender.get();
-            cmc.senderId = sender.id;
-            cmc.senderName = sender.userName;
-            cmc.senderEmail = sender.email;
+            sender.password = null;
+            sender.registrationId = null;
+            cmc.sender = sender;
             cmc.message = chat.message;
             cmc.date = Utility.convertDateToString(chat.date);
             list.add(cmc);
