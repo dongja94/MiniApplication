@@ -8,6 +8,7 @@ import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import com.begentgroup.miniapplication.MyApplication;
+import com.begentgroup.miniapplication.data.ChatMessage;
 import com.begentgroup.miniapplication.data.FacebookFeed;
 import com.begentgroup.miniapplication.data.FacebookFeedsResult;
 import com.begentgroup.miniapplication.data.FacebookIdResult;
@@ -793,7 +794,7 @@ public class NetworkManager {
     private static final String URL_MESSAGE_LIST = MY_SERVER + "/messagelist";
 
     @WorkerThread
-    public MyResult<List<com.begentgroup.miniapplication.data.Message>> getMessageSync(String lastDate) throws IOException {
+    public MyResult<List<ChatMessage>> getMessageSync(String lastDate) throws IOException {
         String url = URL_MESSAGE_LIST;
         if (!TextUtils.isEmpty(lastDate)) {
             url += "?lastDate=" + URLEncoder.encode(lastDate, "utf-8");
@@ -808,9 +809,9 @@ public class NetworkManager {
             String text = response.body().string();
             MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
             if (status.code == 1) {
-                Type type = new TypeToken<MyResult<List<com.begentgroup.miniapplication.data.Message>>>() {
+                Type type = new TypeToken<MyResult<List<ChatMessage>>>() {
                 }.getType();
-                MyResult<List<com.begentgroup.miniapplication.data.Message>> data = gson.fromJson(text, type);
+                MyResult<List<ChatMessage>> data = gson.fromJson(text, type);
                 return data;
             } else {
                 MyResultError data = gson.fromJson(text, MyResultError.class);

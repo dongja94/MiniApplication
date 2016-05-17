@@ -29,7 +29,7 @@ import android.util.Log;
 
 import com.begentgroup.miniapplication.R;
 import com.begentgroup.miniapplication.chatting.ChattingActivity;
-import com.begentgroup.miniapplication.data.Message;
+import com.begentgroup.miniapplication.data.ChatMessage;
 import com.begentgroup.miniapplication.login.MyResult;
 import com.begentgroup.miniapplication.login.User;
 import com.begentgroup.miniapplication.manager.DataConstant;
@@ -61,7 +61,7 @@ public class MyGcmListenerService extends GcmListenerService {
         String senderid = data.getString("sender");
         String message = data.getString("message");
         Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        Log.d(TAG, "ChatMessage: " + message);
 
         if (from.startsWith("/topics/")) {
             // message received from some topic.
@@ -71,18 +71,14 @@ public class MyGcmListenerService extends GcmListenerService {
                 long serverid = Long.parseLong(senderid);
                 String lastDate = DataManager.getInstance().getLastDate(serverid);
                 try {
-                    MyResult<List<Message>> result = NetworkManager.getInstance().getMessageSync(lastDate);
+                    MyResult<List<ChatMessage>> result = NetworkManager.getInstance().getMessageSync(lastDate);
                     String notiMessage = null;
                     User u = null;
-                    for (Message m : result.result) {
-                        User user = new User();
-                        user.id = m.senderId;
-                        user.userName = m.senderName;
-                        user.email = m.senderEmail;
-                        long id = DataManager.getInstance().getUserTableId(user);
+                    for (ChatMessage m : result.result) {
+                        long id = DataManager.getInstance().getUserTableId(m.sender);
                         DataManager.getInstance().addChatMessage(id, DataConstant.ChatTable.TYPE_RECEIVE, m.message, m.date);
-                        notiMessage = m.senderName + ":" + m.message;
-                        u = user;
+                        notiMessage = m.sender.userName + ":" + m.message;
+                        u = m.sender;
                     }
                     Intent intent = new Intent(ACTION_CHAT);
                     intent.putExtra(EXTRA_SENDER_ID, serverid);
@@ -117,7 +113,7 @@ public class MyGcmListenerService extends GcmListenerService {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setTicker("GCM message")
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("GCM Message")
+                .setContentTitle("GCM ChatMessage")
                 .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
