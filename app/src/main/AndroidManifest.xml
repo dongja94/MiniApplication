@@ -59,7 +59,8 @@
         <activity
             android:name=".chatting.ChattingActivity"
             android:label="@string/title_activity_chatting"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true"/>
         <activity android:name=".utils.BrowserActivity"></activity>
         <activity
             android:name="com.facebook.FacebookActivity"

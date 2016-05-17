@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.WorkerThread;
+import android.text.TextUtils;
 
 import com.begentgroup.miniapplication.MyApplication;
 import com.begentgroup.miniapplication.data.FacebookFeed;
@@ -693,6 +695,130 @@ public class NetworkManager {
             }
         });
         return request;
+    }
+
+    private static final String URL_FRIEND_LIST = MY_SERVER + "/friendlist";
+
+    public Request getFriendList(Object tag,
+                                  OnResultListener<MyResult<List<User>>> listener) {
+        Request request = new Request.Builder()
+                .url(URL_FRIEND_LIST)
+                .build();
+
+        final NetworkResult<MyResult<List<User>>> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String text = response.body().string();
+                    MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
+                    if (status.code == 1) {
+                        Type type = new TypeToken<MyResult<List<User>>>() {
+                        }.getType();
+                        MyResult<List<User>> data = gson.fromJson(text, type);
+                        result.result = data;
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    } else {
+                        MyResultError data = gson.fromJson(text, MyResultError.class);
+                        result.excpetion = new IOException(data.result);
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                    }
+                } else {
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                }
+            }
+        });
+        return request;
+    }
+
+    private static final String URL_SEND_MESSAGE = MY_SERVER + "/sendmessage";
+
+    public Request sendMessage(Object tag, long receiverid, String message,
+                                 OnResultListener<MyResult<String>> listener) {
+
+        RequestBody body = new FormBody.Builder()
+                .add("receiver", "" + receiverid)
+                .add("message", message)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(URL_SEND_MESSAGE)
+                .post(body)
+                .build();
+
+        final NetworkResult<MyResult<String>> result = new NetworkResult<>();
+        result.request = request;
+        result.listener = listener;
+        mClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                result.excpetion = e;
+                mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String text = response.body().string();
+                    MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
+                    if (status.code == 1) {
+                        Type type = new TypeToken<MyResult<String>>() {
+                        }.getType();
+                        MyResult<String> data = gson.fromJson(text, type);
+                        result.result = data;
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_SUCCESS, result));
+                    } else {
+                        MyResultError data = gson.fromJson(text, MyResultError.class);
+                        result.excpetion = new IOException(data.result);
+                        mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                    }
+                } else {
+                    result.excpetion = new IOException(response.message());
+                    mHandler.sendMessage(mHandler.obtainMessage(MESSAGE_FAIL, result));
+                }
+            }
+        });
+        return request;
+    }
+
+    private static final String URL_MESSAGE_LIST = MY_SERVER + "/messagelist";
+
+    @WorkerThread
+    public MyResult<List<com.begentgroup.miniapplication.data.Message>> getMessageSync(String lastDate) throws IOException {
+        String url = URL_MESSAGE_LIST;
+        if (!TextUtils.isEmpty(lastDate)) {
+            url += "?lastDate=" + URLEncoder.encode(lastDate, "utf-8");
+        }
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        Response response = mClient.newCall(request).execute();
+
+        if (response.isSuccessful()) {
+            String text = response.body().string();
+            MyResultStatus status = gson.fromJson(text, MyResultStatus.class);
+            if (status.code == 1) {
+                Type type = new TypeToken<MyResult<List<com.begentgroup.miniapplication.data.Message>>>() {
+                }.getType();
+                MyResult<List<com.begentgroup.miniapplication.data.Message>> data = gson.fromJson(text, type);
+                return data;
+            } else {
+                MyResultError data = gson.fromJson(text, MyResultError.class);
+                throw new IOException(data.result);
+            }
+        } else {
+            throw new IOException(response.message());
+        }
     }
 
 }
