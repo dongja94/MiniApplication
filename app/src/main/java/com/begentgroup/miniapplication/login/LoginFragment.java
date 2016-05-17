@@ -71,7 +71,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 final String email = emailView.getText().toString();
                 final String password = passwordView.getText().toString();
-                NetworkManager.getInstance().signin(getContext(), email, password, "",
+                NetworkManager.getInstance().signin(getContext(), email, password, PropertyManager.getInstance().getRegistrationToken(),
                         new NetworkManager.OnResultListener<MyResult<User>>(){
                             @Override
                             public void onSuccess(Request request, MyResult<User> result) {
@@ -146,7 +146,7 @@ public class LoginFragment extends Fragment {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
                     AccessToken token = AccessToken.getCurrentAccessToken();
-                    NetworkManager.getInstance().facebookSignIn(getContext(), token.getToken(), "",
+                    NetworkManager.getInstance().facebookSignIn(getContext(), token.getToken(), PropertyManager.getInstance().getRegistrationToken(),
                             new NetworkManager.OnResultListener<MyResult>() {
                                 @Override
                                 public void onSuccess(Request request, MyResult result) {

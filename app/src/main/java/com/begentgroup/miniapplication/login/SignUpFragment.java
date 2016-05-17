@@ -53,7 +53,7 @@ public class SignUpFragment extends Fragment {
                     Toast.makeText(getContext(), "invalid value", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                NetworkManager.getInstance().signup(getContext(), name, email, password, "", new NetworkManager.OnResultListener<MyResult<User>>() {
+                NetworkManager.getInstance().signup(getContext(), name, email, password, PropertyManager.getInstance().getRegistrationToken(), new NetworkManager.OnResultListener<MyResult<User>>() {
                     @Override
                     public void onSuccess(Request request, MyResult<User> result) {
                         if (result.code == 1) {
