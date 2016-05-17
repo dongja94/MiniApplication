@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by dongja94 on 2016-05-13.
  */
 public class SendMessageServlet extends HttpServlet {
-    private static final String SERVER_KEY = "AIzaSyCN8HNXM4-qwaM0wTSiDt5WHu1wQiTxyJg";
+    private static final String SERVER_KEY = "AIzaSyBQ_qRcAzYrLgVSfiNWTkVeCIubJOovJRs";
     Sender sender = new Sender(SERVER_KEY);
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
