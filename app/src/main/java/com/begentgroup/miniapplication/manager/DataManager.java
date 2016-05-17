@@ -54,46 +54,46 @@ public class DataManager extends SQLiteOpenHelper {
 
     }
 
-    ContentValues values = new ContentValues();
-    public long getUserTableId(User user) {
+    public static final long INVALID_ID = -1;
+    public long getChatUserId(long senderid) {
         SQLiteDatabase db = getReadableDatabase();
         String[] columns = {DataConstant.ChatUserTable._ID};
         String selection = DataConstant.ChatUserTable.COLUMN_SERVER_USER_ID + " = ?";
-        String[] selectionArgs = {"" + user.id};
+        String[] selectionArgs = {"" + senderid};
         Cursor c = db.query(DataConstant.ChatUserTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-        if (c.moveToNext()) {
-            long id = c.getLong(c.getColumnIndex(DataConstant.ChatUserTable._ID));
+        if (!c.moveToNext()) {
             c.close();
-            return id;
+            return INVALID_ID;
         }
-        db = getWritableDatabase();
+        long id = c.getLong(c.getColumnIndex(DataConstant.ChatUserTable._ID));
+        c.close();
+        return id;
+    }
+
+    ContentValues values = new ContentValues();
+    public long getUserTableId(User user) {
+        long id = getChatUserId(user.id);
+        if (id != INVALID_ID) return id;
+
+        SQLiteDatabase db = getWritableDatabase();
         values.clear();
         values.put(DataConstant.ChatUserTable.COLUMN_SERVER_USER_ID, user.id);
         values.put(DataConstant.ChatUserTable.COLUMN_NAME, user.userName);
         values.put(DataConstant.ChatUserTable.COLUMN_EMAIL, user.email);
-        long id = db.insert(DataConstant.ChatUserTable.TABLE_NAME, null, values);
-        return id;
+        return db.insert(DataConstant.ChatUserTable.TABLE_NAME, null, values);
     }
 
     public String getLastDate(long serverid) {
-        SQLiteDatabase db = getReadableDatabase();
-        String[] columns = {DataConstant.ChatUserTable._ID};
-        String selection = DataConstant.ChatUserTable.COLUMN_SERVER_USER_ID + " = ?";
-        String[] selectionArgs = {"" + serverid};
-        Cursor c = db.query(DataConstant.ChatUserTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-        if (!c.moveToNext()) {
-            c.close();
-            return null;
-        }
-        long id = c.getLong(c.getColumnIndex(DataConstant.ChatUserTable._ID));
-        c.close();
+        long id = getChatUserId(serverid);
+        if (id == INVALID_ID) return null;
 
-        columns = new String[]{DataConstant.ChatTable.COLUMN_DATE};
-        selection = DataConstant.ChatTable.COLUMN_USER_ID + " = ?";
-        selectionArgs = new String[] {""+ id};
+        SQLiteDatabase db = getReadableDatabase();
+        String[] columns = {DataConstant.ChatTable.COLUMN_DATE};
+        String selection = DataConstant.ChatTable.COLUMN_USER_ID + " = ?";
+        String[] selectionArgs = {""+ id};
         String orderBy = DataConstant.ChatTable.COLUMN_DATE + " DESC";
         String limit = "1";
-        c = db.query(DataConstant.ChatTable.TABL_NAME, columns, selection, selectionArgs, null, null, orderBy, limit);
+        Cursor c = db.query(DataConstant.ChatTable.TABL_NAME, columns, selection, selectionArgs, null, null, orderBy, limit);
         if (!c.moveToNext()) {
             c.close();
             return null;

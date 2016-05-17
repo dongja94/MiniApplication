@@ -106,10 +106,13 @@ public class ChattingActivity extends AppCompatActivity {
         }
     };
     User user;
-    long userid = -1;
+    long userid = DataManager.INVALID_ID;
     private void initData() {
-        if (userid == -1) {
-            userid = DataManager.getInstance().getUserTableId(user);
+        if (userid == DataManager.INVALID_ID) {
+            userid = DataManager.getInstance().getChatUserId(user.id);
+            if (userid == DataManager.INVALID_ID) {
+                return;
+            }
         }
         Cursor c = DataManager.getInstance().getChatList(userid);
         mAdapter.changeCursor(c);

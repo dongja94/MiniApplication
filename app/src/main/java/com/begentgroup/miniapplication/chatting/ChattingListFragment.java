@@ -1,6 +1,7 @@
 package com.begentgroup.miniapplication.chatting;
 
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,9 +10,11 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.begentgroup.miniapplication.R;
+import com.begentgroup.miniapplication.login.User;
 import com.begentgroup.miniapplication.manager.DataConstant;
 import com.begentgroup.miniapplication.manager.DataManager;
 
@@ -41,6 +44,19 @@ public class ChattingListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_chatting_list, container, false);
         listView = (ListView)view.findViewById(R.id.listView);
         listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor c = (Cursor)listView.getItemAtPosition(position);
+                User user = new User();
+                user.id = c.getLong(c.getColumnIndex(DataConstant.ChatUserTable.COLUMN_SERVER_USER_ID));
+                user.userName = c.getString(c.getColumnIndex(DataConstant.ChatUserTable.COLUMN_NAME));
+                user.email = c.getString(c.getColumnIndex(DataConstant.ChatUserTable.COLUMN_EMAIL));
+                Intent intent = new Intent(getContext(), ChattingActivity.class);
+                intent.putExtra(ChattingActivity.EXTRA_USER, user);
+                startActivity(intent);
+            }
+        });
         return view;
     }
 
