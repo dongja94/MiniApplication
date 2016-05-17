@@ -75,8 +75,9 @@ public class DataManager {
     public List<User> getUserList(User user, String username, int offset, int limit) {
         List<User> list = new ArrayList<>();
         try {
-            List<User> all = ofy().load().type(User.class).filter("id !=",user.id).offset(offset).limit(limit).list();
+            List<User> all = ofy().load().type(User.class).offset(offset).limit(limit).list();
             for (User u : all) {
+                if (u.id.equals(user.id)) continue;
                 if (username == null || username.equals("") || u.userName.contains(username)) {
                     u.password = null;
                     u.registrationId = null;
