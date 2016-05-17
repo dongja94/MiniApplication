@@ -68,7 +68,7 @@ public class FacebookSignUpFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String name = nameView.getText().toString();
-                String email = nameView.getText().toString();
+                String email = emailView.getText().toString();
                 NetworkManager.getInstance().facebookSignUp(getContext(), name, email,
                         new NetworkManager.OnResultListener<MyResult<User>>() {
                             @Override
