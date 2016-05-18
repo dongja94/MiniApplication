@@ -1,7 +1,7 @@
 package com.begentgroup.testappengine;
 
-import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.Sender;
+import com.begentgroup.gcm.Message;
+import com.begentgroup.gcm.Sender;
 import com.googlecode.objectify.Ref;
 
 import java.io.IOException;
@@ -29,13 +29,17 @@ public class SendMessageServlet extends HttpServlet {
             chatMessage.receiver = Ref.create(receiver);
             chatMessage.message = msg;
             DataManager.getInstance().addChatMessage(chatMessage);
-            Message message = new Message.Builder().addData("type","chat")
+            Message message = new Message.Builder().addData("type","simplechat")
                     .addData("sender", "" + user.id)
                     .addData("message","add message").build();
-            com.google.android.gcm.server.Result result = sender.send(message, receiver.registrationId, 3);
-            if (result.getMessageId() != null) {
-                Utility.responseSuccessMessage(resp, "success");
-                return;
+            try {
+                com.begentgroup.gcm.Result result = sender.send(message, receiver.registrationId, 3);
+                if (result.getMessageId() != null) {
+                    Utility.responseSuccessMessage(resp, "success");
+                    return;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             Utility.responseErrorMessage(resp, "send fail");
             return;

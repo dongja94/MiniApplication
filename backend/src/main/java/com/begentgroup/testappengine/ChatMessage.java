@@ -17,5 +17,6 @@ public class ChatMessage {
     @Index Date date = new Date();
     @Index Ref<User> sender;
     @Index Ref<User> receiver;
+    @Index Ref<Group> group;
     String message;
 }

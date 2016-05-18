@@ -10,6 +10,7 @@ public class ChatMessageClient {
     User sender;
     String message;
     String date;
+    long groupId;
 
     public static List<ChatMessageClient> convertChatMessage(List<ChatMessage> chatlist) {
         List<ChatMessageClient> list = new ArrayList<>();
@@ -21,6 +22,9 @@ public class ChatMessageClient {
             cmc.sender = sender;
             cmc.message = chat.message;
             cmc.date = Utility.convertDateToString(chat.date);
+            if (chat.group != null) {
+                cmc.groupId = chat.group.getKey().getId();
+            }
             list.add(cmc);
         }
         return list;

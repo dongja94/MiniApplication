@@ -18,5 +18,6 @@ public class Group implements Serializable {
     @Id public Long id;
     @Index public String groupName;
     public String description;
-    public List<Ref<User>> members = new ArrayList<>();
+    public String notificationKey;
+    @Index public List<Ref<User>> members = new ArrayList<>();
 }

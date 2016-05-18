@@ -33,6 +33,14 @@
         <url-pattern>/friendlist</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>UserInfoServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.UserInfoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserInfoServlet</servlet-name>
+        <url-pattern>/userinfo</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>SendMessageServlet</servlet-name>
         <servlet-class>com.begentgroup.testappengine.SendMessageServlet</servlet-class>
     </servlet>
@@ -111,6 +119,70 @@
     <servlet-mapping>
         <servlet-name>FacebookSignUpServlet</servlet-name>
         <url-pattern>/facebooksignup</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>GroupAddServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.GroupAddServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupAddServlet</servlet-name>
+        <url-pattern>/groupadd</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>GroupInfoServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.GroupInfoServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupInfoServlet</servlet-name>
+        <url-pattern>/groupinfo</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>GroupSearchServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.GroupSearchServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupSearchServlet</servlet-name>
+        <url-pattern>/groupsearch</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>GroupUserAddServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.GroupUserAddServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupUserAddServlet</servlet-name>
+        <url-pattern>/groupuseradd</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>GroupUserRemoveServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.GroupUserRemoveServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GroupUserRemoveServlet</servlet-name>
+        <url-pattern>/groupuserremove</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>MyGroupListServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.MyGroupListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyGroupListServlet</servlet-name>
+        <url-pattern>/mygrouplist</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>SendGroupMessageServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.SendGroupMessageServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SendGroupMessageServlet</servlet-name>
+        <url-pattern>/sendgroupmessage</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.TestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
     </servlet-mapping>
     <filter>
         <filter-name>ObjectifyFilter</filter-name>

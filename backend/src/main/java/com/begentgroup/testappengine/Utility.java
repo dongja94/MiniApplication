@@ -37,4 +37,8 @@ public class Utility {
     public static <T>void responseErrorMessage(HttpServletResponse resp, T errorMessage) throws IOException {
         responseMessage(resp, Result.FAIL, errorMessage);
     }
+
+    public static boolean isEmpty(String text) {
+        return text == null || text.equals("");
+    }
 }

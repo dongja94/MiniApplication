@@ -104,13 +104,13 @@ public class DataManager {
         throw new InvalidUserInfoException("email or password invalid");
     }
 
-    public Group addGroup(Group group) throws UserAddException {
+    public Group addGroup(Group group) throws GroupAddException {
         Group alreadyGroup = getGroup(group.groupName);
         if (alreadyGroup == null) {
             ofy().save().entity(group).now();
             return group;
         }
-        throw new UserAddException("User exist");
+        throw new GroupAddException("Group exist");
     }
 
     public Group getGroup(String groupName) {
@@ -123,7 +123,7 @@ public class DataManager {
         return group;
     }
 
-    public List<Group> getGroup(User user) {
+    public List<Group> getGroupList(User user) {
         List<Group> list = ofy().load().type(Group.class).filter("members", user).list();
         return list;
     }
@@ -132,7 +132,7 @@ public class DataManager {
         List<Group> list = new ArrayList<>();
         List<Group> all = ofy().load().type(Group.class).order("groupName").offset(offset).limit(limit).list();
         for (Group g : all) {
-            if (g.groupName.contains(groupName)) {
+            if (Utility.isEmpty(groupName) || g.groupName.contains(groupName)) {
                 list.add(g);
             }
         }
@@ -145,7 +145,7 @@ public class DataManager {
         }
     }
 
-    public void deleteGroup(Group group) {
+    public void removeGroup(Group group) {
         if (group.id != null) {
             ofy().delete().entity(group).now();
         }
