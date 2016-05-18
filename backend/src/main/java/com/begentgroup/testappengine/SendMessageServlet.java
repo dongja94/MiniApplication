@@ -15,8 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * Created by dongja94 on 2016-05-13.
  */
 public class SendMessageServlet extends HttpServlet {
-    private static final String SERVER_KEY = "AIzaSyBQ_qRcAzYrLgVSfiNWTkVeCIubJOovJRs";
-    Sender sender = new Sender(SERVER_KEY);
+    Sender sender = new Sender(GcmConstant.SERVER_KEY);
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User)req.getSession().getAttribute("User");

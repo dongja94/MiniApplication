@@ -12,8 +12,6 @@ import java.util.List;
  * Created by dongja94 on 2016-05-18.
  */
 public class DeviceGroupManager {
-    private static final String SERVER_KEY = "AIzaSyBQ_qRcAzYrLgVSfiNWTkVeCIubJOovJRs";
-    private static final String SENDER_ID = "143816014145";
     DeviceGroupSender sender;
 
     private static DeviceGroupManager instance;
@@ -25,7 +23,7 @@ public class DeviceGroupManager {
     }
 
     private DeviceGroupManager() {
-        sender = new DeviceGroupSender(SERVER_KEY, SENDER_ID);
+        sender = new DeviceGroupSender(GcmConstant.SERVER_KEY, GcmConstant.SENDER_ID);
     }
 
     public String createGroup(Group group) throws IOException {
