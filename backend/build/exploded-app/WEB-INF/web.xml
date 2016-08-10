@@ -177,6 +177,22 @@
         <url-pattern>/sendgroupmessage</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>LogOutServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.LogOutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogOutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>TestServlet</servlet-name>
         <servlet-class>com.begentgroup.testappengine.TestServlet</servlet-class>
     </servlet>
