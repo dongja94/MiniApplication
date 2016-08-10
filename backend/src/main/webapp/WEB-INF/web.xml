@@ -185,6 +185,14 @@
         <url-pattern>/profile</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>LogOutServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.LOgOutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogOutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>TestServlet</servlet-name>
         <servlet-class>com.begentgroup.testappengine.TestServlet</servlet-class>
     </servlet>
