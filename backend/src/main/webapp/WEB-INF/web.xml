@@ -177,6 +177,14 @@
         <url-pattern>/sendgroupmessage</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-class>com.begentgroup.testappengine.ProfileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProfileServlet</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>TestServlet</servlet-name>
         <servlet-class>com.begentgroup.testappengine.TestServlet</servlet-class>
     </servlet>

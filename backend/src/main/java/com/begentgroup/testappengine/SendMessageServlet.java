@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by dongja94 on 2016-05-13.
+ * Created by dongja94 on 2016-05-13.`
  */
 public class SendMessageServlet extends HttpServlet {
     Sender sender = new Sender(GcmConstant.SERVER_KEY);
