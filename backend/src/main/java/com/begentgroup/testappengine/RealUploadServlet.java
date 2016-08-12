@@ -29,7 +29,7 @@ public class RealUploadServlet extends HttpServlet {
             Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(req);
             List<BlobKey> blobKeys = blobs.get("myFile");
             if (blobKeys != null && !blobKeys.isEmpty()) {
-                String url = req.getScheme() + "://" + req.getServletPath();
+                String url = req.getScheme() + "://" + req.getServerName();
                 if (!((req.getScheme().toLowerCase().equals("http") && req.getServerPort() == 80) ||
                         (req.getScheme().toLowerCase().equals("https") && req.getServerPort() == 443))) {
                     url += ":" + req.getServerPort();
