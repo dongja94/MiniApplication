@@ -14,7 +14,8 @@ public class ChatMessageClient {
 
     public static List<ChatMessageClient> convertChatMessage(List<ChatMessage> chatlist) {
         List<ChatMessageClient> list = new ArrayList<>();
-        for(ChatMessage chat : chatlist) {
+        for(int i = 0; i < chatlist.size(); i++) { //ChatMessage chat : chatlist) {
+            ChatMessage chat = chatlist.get(i);
             ChatMessageClient cmc = new ChatMessageClient();
             User sender = chat.sender.get();
             sender.password = null;
