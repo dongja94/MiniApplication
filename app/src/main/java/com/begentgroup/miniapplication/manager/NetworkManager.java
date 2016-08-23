@@ -43,6 +43,8 @@ import okhttp3.Cache;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -83,6 +85,16 @@ public class NetworkManager {
         builder.connectTimeout(30, TimeUnit.SECONDS);
         builder.readTimeout(30, TimeUnit.SECONDS);
         builder.writeTimeout(30, TimeUnit.SECONDS);
+        builder.addInterceptor(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+                Request.Builder builder = request.newBuilder();
+                builder.header("Accept", "application/json");
+                builder.header("appKey", "458a10f5-c07e-34b5-b2bd-4a891e024c2a");
+                return chain.proceed(builder.build());
+            }
+        });
 
         mClient = builder.build();
     }
@@ -204,13 +216,26 @@ public class NetworkManager {
 
     private static final String TSTORE_SEARCH_PRODUCT_URL = TSTORE_SERVER + "/tstore/products?version=1&searchKeyword=%s&page=%s&count=%s&order=%s";
 
+    private static final String TSTORE_SCHEME = "https";
+    private static final String TSTORE_HOST = "apis.skplanetx.com";
+    private static final String TSTORE_SEARCH_PRODUCT_PATH = "/tstore/products";
+
     public static final String SEARCH_PRODUCT_ORDER_R = "R";
     public static final String SEARCH_PRODUCT_ORDER_L = "L";
     public static final String SEARCH_PRODUCT_ORDER_D = "D";
 
     public Request getTStoreSearchProductList(Object tag, String keyword, int page, int count, String order,
                                               OnResultListener<TStoreCategoryProduct> listener) throws UnsupportedEncodingException {
-        String url = String.format(TSTORE_SEARCH_PRODUCT_URL, URLEncoder.encode(keyword, "utf-8"), page, count, order);
+//        String url = String.format(TSTORE_SEARCH_PRODUCT_URL, URLEncoder.encode(keyword, "utf-8"), page, count, order);
+        HttpUrl url = new HttpUrl.Builder().scheme(TSTORE_SCHEME)
+                .host(TSTORE_HOST)
+                .addPathSegments(TSTORE_SEARCH_PRODUCT_PATH)
+                .addQueryParameter("version", "1")
+                .addQueryParameter("page", "" + page)
+                .addQueryParameter("count",  "" + count)
+                .addQueryParameter("searchKeyword", keyword)
+                .addQueryParameter("order",order)
+                .build();
         Request request = new Request.Builder()
                 .url(url)
                 .header("Accept", "application/json")
@@ -821,5 +846,28 @@ public class NetworkManager {
             throw new IOException(response.message());
         }
     }
+
+    private void testUrlBilder() {
+        HttpUrl url = new HttpUrl.Builder()
+                .scheme("https")
+                .host("en.wikipedia.org")
+                .addPathSegment("w")
+                .addPathSegment("index.php")
+                .addQueryParameter("search","Jurassic Park")
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+    }
+    private HttpUrl.Builder getBaseUrlBuilder() {
+        HttpUrl.Builder builder = new HttpUrl.Builder()
+                .scheme("https")
+                .host("en.wikipedia.org")
+                .addPathSegment("w")
+                .addPathSegment("index.php")
+                .addQueryParameter("search","Jurassic Park");
+        return builder;
+    }
+
 
 }
